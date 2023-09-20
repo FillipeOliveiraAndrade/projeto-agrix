@@ -2,8 +2,11 @@ package com.betrybe.agrix.models.entities;
 
 
 import com.betrybe.agrix.security.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -11,13 +14,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * Class representing a person.
  */
 @Entity
-public class Person implements UserDetails {
+public class Person implements UserDetails, GrantedAuthority {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +32,7 @@ public class Person implements UserDetails {
 
   private String password;
 
+  @Enumerated(EnumType.STRING)
   private Role role;
 
   public Person() {
@@ -81,9 +86,10 @@ public class Person implements UserDetails {
         && Objects.equals(role, person.role);
   }
 
+  @JsonIgnore
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return List.of();
+    return List.of(new SimpleGrantedAuthority(role.getName()));
   }
 
   @Override
@@ -104,6 +110,12 @@ public class Person implements UserDetails {
   @Override
   public boolean isEnabled() {
     return true;
+  }
+
+  @JsonIgnore
+  @Override
+  public String getAuthority() {
+    return this.getRole().getName();
   }
 }
 

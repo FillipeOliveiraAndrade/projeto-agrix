@@ -31,6 +31,19 @@ public class TokenService {
   }
 
   /**
+   * Validando token.
+   */
+  public String validateToken(String token) {
+    Algorithm algorithm = Algorithm.HMAC256(secret);
+
+    return JWT.require(algorithm)
+        .withIssuer("trybe")
+        .build()
+        .verify(token)
+        .getSubject();
+  }
+
+  /**
    * Função que controla a validade do token. 
    */
   private Instant generateExpirationDate() {

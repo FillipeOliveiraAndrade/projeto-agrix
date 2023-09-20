@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +36,7 @@ public class CropController {
    * Retornando todas as crops.
    */
   @GetMapping
+  @Secured({ "MANAGER", "ADMIN" })
   public ResponseEntity<List<CropDto>> findAllCrops() {
     List<Crop> crops = this.cropService.findAll();
     List<CropDto> cropsDto = crops.stream().map(CropDto::fromEntity).toList();
@@ -45,6 +47,7 @@ public class CropController {
    * Retornando crop pelo ID.
    */
   @GetMapping("/{id}")
+  @Secured({ "MANAGER", "ADMIN" })
   public ResponseEntity<CropDto> getCropById(@PathVariable Long id) {
     Crop crop = this.cropService.findById(id);
     CropDto cropDto = CropDto.fromEntity(crop);
@@ -55,6 +58,7 @@ public class CropController {
    * Retornando crop filtrando pelas datas.
    */
   @GetMapping("/search")
+  @Secured({ "MANAGER", "ADMIN" })
   public ResponseEntity<List<CropDto>> getCropsByHarvestDate(
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end
